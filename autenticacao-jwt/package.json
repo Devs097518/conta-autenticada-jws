@@ -1,0 +1,17 @@
+{
+  "name": "autenticacao-jwt",
+  "version": "1.0.0",
+  "main": "autenticacao.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node autenticacao.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
