@@ -1,2 +1,4 @@
-autenticacao-jwt/node_modules
-autenticacao-jwt/package-lock.json
+node_modules/
+**/node_modules/
+*.log
+.DS_Store
