@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "bcrypt": "^6.0.0"
+  },
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": ""
+}
