@@ -98,15 +98,16 @@ async function deletar() {
 async function logar() {
     try {
         let emailJWT = document.getElementById("emailJWT").value;
+        let senhaJWT = document.getElementById("senhaJWT").value;
 
         let dadosBuscar = await fetch(
-            `http://localhost:3000/userLog/${emailJWT}`,
+            `http://localhost:3000/userLog/${emailJWT}/${senhaJWT}`,
         );
         const dadosConvertidos = await dadosBuscar.json();
         console.log(dadosConvertidos);
 
     } catch (error) {
-        console.log("erro ao deletar os dados", error);
+        console.log("erro ao logar os dados", error);
     }
 }
 

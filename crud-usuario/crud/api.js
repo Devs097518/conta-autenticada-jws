@@ -103,11 +103,18 @@ app.delete("/userADD/:id", async (req, res) => {
 
 
 //LOGAR
-app.get("/userLog/:email", async (req, res) => {
+app.get("/userLog/:email/:senha", async (req, res) => {
   try {
-    const busca = await UserInfoSchema.findOne({ email: req.params.email });
+    const { senha } = req.params; 
+    const busca = await UserInfoSchema.findOne({ email: req.params.email  });
     
-    res.json(busca)
+    if (busca != null){
+      
+      const saoIguais = bcrypt.compareSync(senha, busca.senha);
+      res.json({ autenticado: saoIguais }); 
+
+    }
+
   }
   catch (error) {
     res.json({ error: error })
