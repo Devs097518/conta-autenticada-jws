@@ -62,9 +62,6 @@ async function editar() {
                 }),
             },
         );
-
-
-
     } catch (error) {
         console.log("erro ao acessar os dados", error);
     }
@@ -90,10 +87,6 @@ async function deletar() {
 }
 
 
-// db.collection.findOne({ nome: "João" }, (err, doc) => {
-//   console.log(doc);
-// });
-
 
 async function logar() {
     try {
@@ -105,9 +98,11 @@ async function logar() {
         );
         const dadosConvertidos = await dadosBuscar.json();
         console.log(dadosConvertidos);
+        alert("Validade da Token : " + dadosConvertidos.verificacao.message + "\n" + "Acesso à área administrativa: " + dadosConvertidos.autorizado.message);
 
     } catch (error) {
         console.log("erro ao logar os dados", error);
+        alert("Erro ao logar" + error);
     }
 }
 

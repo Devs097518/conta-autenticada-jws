@@ -104,6 +104,40 @@ app.delete("/userADD/:id", async (req, res) => {
 });
 
 
+
+// Autenticação JWT
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  if (!authHeader) return res.status(401).json({ message: 'Token não fornecido!' });
+
+  // Suporta tanto 'Bearer <token>' quanto o token puro
+  const parts = authHeader.split(' ');
+  const token = parts.length === 2 && parts[0] === 'Bearer' ? parts[1] : authHeader;
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    if (err) return res.status(401).json({ message: 'Token inválido!' });
+    req.user = user;
+    next();
+  });
+};
+
+
+// Rota protegida
+app.get('/protected', authenticateToken, (req, res) => {
+    res.status(200).json({ message: 'Bem-vindo à rota autenticada!' });
+});
+
+
+// Rota administrativa
+app.get('/admin', authenticateToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Acesso negado!' });
+    }
+    res.status(200).json({ message: 'Bem-vindo à área administrativa!' });
+});
+
+
+
 //LOGAR
 
 app.get("/userLog/:email/:senha", async (req, res) => {
@@ -132,70 +166,32 @@ app.get("/userLog/:email/:senha", async (req, res) => {
           process.env.SECRET_KEY,
           { expiresIn: '1h' }
         );
-        console.log(token);
-        res.json({ token });
+
+        // Envia o token para a rota /protected usando o header Authorization
+        const verificar = await fetch('http://localhost:3000/protected', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const verificacao = await verificar.json();
+
+
+        // Envia o token para a rota /admin usando o header Authorization
+        const autorizacao = await fetch('http://localhost:3000/admin', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const autorizado = await autorizacao.json();
+
+        
+        res.json({ verificacao , autorizado});
       }
 
     }
+    
   } catch (error) {
     res.json({ error: error })
   }
 });
-
-
-// //LOGAR
-// app.get("/userLog/:email/:senha", async (req, res) => {
-
-//   try {
-//     const { senha } = req.params; 
-//     const busca = await UserInfoSchema.findOne({ email: req.params.email  });
-
-//     if (busca != null){
-
-//       const saoIguais = bcrypt.compareSync(senha, busca.senha);
-//       res.json({ autenticado: saoIguais }); // true ou false
-
-//     }
-
-//   }
-//   catch (error) {
-//     res.json({ error: error })
-//   }
-// });
-
-
-// //LOGAR
-// app.get("/userLog/:email/:senha", async (req, res) => {
-//   try {
-//     const { senha } = req.params; 
-//     const busca = await UserInfoSchema.findOne({ email: req.params.email  });
-
-//     if (busca != null){
-//       res.json(busca);
-//       const saoIguais = bcrypt.compareSync(senha, busca.senha);
-//       // res.json({ autenticado: saoIguais }); // true ou false
-
-
-
-//       // if (saoIguais) {
-//       //         const token = jwt.sign(
-//       //             { id: busca.id, email: busca.email, role: busca.role },
-//       //             SECRET_KEY,
-//       //             { expiresIn: '1h' }
-//       //         );
-//       //         res.status(201).json({ token });
-
-//       //     } else {
-//       //         res.status(401).json({ message: 'Usuário ou senha inválidos' });
-//       //     }
-
-//     }
-
-//   }
-//   catch (error) {
-//     res.json({ error: error })
-//   }
-// });
 
 
 
